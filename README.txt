@@ -26,7 +26,3 @@ To run from command line, build Jar file first using gradle then run the followi
    
    java -cp build/libs/Calculator.jar ca.pakzad.calculator.Main "add(4,3)"
   
-
-
-
-
