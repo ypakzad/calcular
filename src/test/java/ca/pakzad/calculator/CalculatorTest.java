@@ -23,7 +23,7 @@ import org.junit.runners.Parameterized;
 public class CalculatorTest {
 	private String expression;
 	private int result;
-	private Calculator calculator;
+	private Calculator_2 calculator;
 
 	public CalculatorTest(String expression, int result) {
 		super();
@@ -33,7 +33,7 @@ public class CalculatorTest {
 
 	@Before
 	public void initialize() {
-		calculator = new Calculator();
+		calculator = new Calculator_2();
 	}
 
 	@Parameterized.Parameters
@@ -42,7 +42,11 @@ public class CalculatorTest {
 			{ "add(5,mult(3,sub(6,4)))", 11 }, 
 			{ "mult(5,mult(3,sub(6,4)))", 30 },
 			{ "sub(5,mult(3,sub(6,4)))", -1 },
-			{ "add(5,div(3,sub(6,4)))", 6 } });
+			{ "add(5,div(3,sub(6,4)))", 6  },
+			{ "let(a,5,add(a,a)))", 10 }
+			//{ "let(a, 5, let(b, mult(a, 10), add(b, a)))",15},
+			//{ "let(a, let(b, 10, add(b, b)), let(b, 20, add(a, b))",40}
+			});
 	}
 
 	@Test

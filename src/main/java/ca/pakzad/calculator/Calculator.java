@@ -31,7 +31,7 @@ public class Calculator {
 	public static int calculate(String expression) throws RuntimeException {
 		// We use ArrayDeque as a stack
 		String ss[] = expression.split("[(),]");
-
+		logger.info("Processiong input expression: {}.", Arrays.toString(ss));
 		ArrayDeque<String> st = new ArrayDeque<>();
 		int result = 0;
 
