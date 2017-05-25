@@ -32,6 +32,7 @@ public class Main {
 			logger.error("Failed to compute expression: " + expression );
 			logger.error("",e);
 			//e.printStackTrace();
+			System.out.println("Failed to compute expression: " + expression );
 			System.exit(1);
 		}
 		System.exit(0);
