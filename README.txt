@@ -25,4 +25,10 @@ To run individual unit test:    ./gradlew  -Dtest.single=CalculatorTest test
 To run from command line, build Jar file first using gradle then run the following command:
    
    java -cp build/libs/Calculator.jar ca.pakzad.calculator.Main "add(4,3)"
+
+ Logging
+ Log messages are displayed on the console and also stored in the logs/calculator.log file.
+ You can configure logging levels in the src/main/resources/logback.xml file.
+ 
+ 
   

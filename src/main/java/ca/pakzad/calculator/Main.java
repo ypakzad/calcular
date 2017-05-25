@@ -9,7 +9,6 @@
 
 package ca.pakzad.calculator;
 
-import java.util.ArrayDeque;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,28 +17,23 @@ public class Main {
 	static Logger logger = LoggerFactory.getLogger(Main.class);
 	 
 	public static void main(String[] args) {
-		logger.info("Verifying commandline arguments." + args[0]);
+		String expression = args[0];
+		logger.debug("Verifying commandline arguments: " + expression);
 		if (args.length <1 ){
 			System.out.println("Missing expression arguments.");
 			System.out.print("Example expression arguments:" + " add(5,mult(3,sub(6,4)))" + ", " + "mult(3,4)");
 			logger.info("Missing expression arguments");
 			System.exit(1);
 		}
-	
-		logger.info(args[0]);
 		
 		try{
-			Calculator.calculate(args[0]);
+			long result = Calculator.compute(expression);
 		}catch (Exception e){
-			logger.error("Invalid expression: " + args[0] );
+			logger.error("Invalid expression: " + expression );
+			logger.error("",e);
+			//e.printStackTrace();
 			System.exit(1);
 		}
 		System.exit(0);
-		
-		
-		String ss[] = args[0].split("[(),]");
-
-		
 	}
-
 }

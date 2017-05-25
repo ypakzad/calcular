@@ -1,6 +1,6 @@
 /*************************************************************************
  * @author Y. Pakzad
- * A JUnit test class for simple calculator class to evaluate the result
+ * A JUnit test class for a simple calculator class to evaluate the result
  *  of arithmetic  expressions such as: "add(5,mult(3,sub(6,4)))" and  
  * "mult(5,mult(3,sub(6,4)))"
  * 
@@ -23,7 +23,7 @@ import org.junit.runners.Parameterized;
 public class CalculatorTest {
 	private String expression;
 	private int result;
-	private Calculator_2 calculator;
+	private Calculator calculator;
 
 	public CalculatorTest(String expression, int result) {
 		super();
@@ -33,26 +33,29 @@ public class CalculatorTest {
 
 	@Before
 	public void initialize() {
-		calculator = new Calculator_2();
+		calculator = new Calculator();
 	}
 
 	@Parameterized.Parameters
-	public static Collection expressions() {
+	public static Collection<Object[]> expressions() {
 		return Arrays.asList(new Object[][] { 
 			{ "add(5,mult(3,sub(6,4)))", 11 }, 
 			{ "mult(5,mult(3,sub(6,4)))", 30 },
-			{ "sub(5,mult(3,sub(6,4)))", -1 },
-			{ "add(5,div(3,sub(6,4)))", 6  },
-			{ "let(a,5,add(a,a)))", 10 }
-			//{ "let(a, 5, let(b, mult(a, 10), add(b, a)))",15},
-			//{ "let(a, let(b, 10, add(b, b)), let(b, 20, add(a, b))",40}
+			{ "sub(5,mult(3,sub(6,4)))", -1 }, 
+			{ "add(5,div(3,sub(6,4)))", 6 },
+			{ "mult(add(2, 2), div(9, 3))", 12 }, 
+			{ "let(a,5,add(a,a)))", 10 }, 
+			{ "let(a,3,sub(5,a))", 2 },
+			{ "let(a,let(b,2,mult(b,3)),add(a,12))", 18 }, 
+			{ "let(a,5,let(b,mult(a,10),add(b,a)))", 55 },
+			{ "let(a, let(b, 10, add(b, b)), let(b, 20, add(a, b))", 40 } 
 			});
 	}
 
 	@Test
 	public void testCalcularParameters() {
 		try {
-			assertEquals(Calculator.calculate(expression), result);
+			assertEquals(Calculator.compute(expression), result);
 
 		} catch (RuntimeException e) {
 
@@ -62,7 +65,7 @@ public class CalculatorTest {
 	@Test
 	public void testCalcularInvalidExpressions() {
 		try {
-			Calculator.calculate("add(5,mult(3,sub 6,4))");
+			Calculator.compute("add(5,mult(3,sub 6,4))");
 			fail("Expected to fail bucause of an invalid expression.");
 
 		} catch (RuntimeException e) {
@@ -70,8 +73,15 @@ public class CalculatorTest {
 		}
 	}
 
-	//@Test
-	public void testCalcularLet() {
-		assertEquals(Calculator.calculate("let(a,5,let(b,mult(a,10),add(b,a)))"), 55);
+	@Test
+	public void testCalcularInvalidExpressions2() {
+		try {
+			Calculator.compute("let(a,let(b,2,(mult(b,3))");
+			fail("Expected to fail bucause of an invalid expression.");
+
+		} catch (RuntimeException e) {
+
+		}
 	}
+
 }
