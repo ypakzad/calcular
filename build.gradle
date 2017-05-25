@@ -38,9 +38,27 @@ dependencies {
    
 }
 
-configurations.all {
-   exclude group: 'org.slf4j', module: 'slf4j-log4j12'
-}
 
+//configurations.all {
+  // exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+//}
+
+
+run {
+    if (project.hasProperty("Args")) {
+        args Eval.me(Args)
+    }
+}
  
 
+jar {
+    // Keep jar clean:
+    exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.MF'
+
+    manifest {
+        attributes ( 'Main-Class': 'ca.pakzad.Calculator.Main',
+       		  'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
+      		   configurations.runtime.files.collect { "lib/$it.name" }.join(' ')
+      		  )
+    }
+}

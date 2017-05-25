@@ -25,11 +25,10 @@ public class Main {
 			logger.info("Missing expression arguments");
 			System.exit(1);
 		}
-		
 		try{
 			long result = Calculator.compute(expression);
 		}catch (Exception e){
-			logger.error("Invalid expression: " + expression );
+			logger.error("Failed to compute expression: " + expression );
 			logger.error("",e);
 			//e.printStackTrace();
 			System.exit(1);
