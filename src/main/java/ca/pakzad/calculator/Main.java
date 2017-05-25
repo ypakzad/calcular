@@ -27,6 +27,7 @@ public class Main {
 		}
 		try{
 			long result = Calculator.compute(expression);
+			System.out.println(expression + "=" + result);
 		}catch (Exception e){
 			logger.error("Failed to compute expression: " + expression );
 			logger.error("",e);
