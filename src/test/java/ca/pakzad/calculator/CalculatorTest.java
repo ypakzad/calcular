@@ -9,12 +9,8 @@
 package ca.pakzad.calculator;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 import java.util.Arrays;
 import java.util.Collection;
-
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -23,17 +19,11 @@ import org.junit.runners.Parameterized;
 public class CalculatorTest {
 	private String expression;
 	private int result;
-	private Calculator calculator;
 
 	public CalculatorTest(String expression, int result) {
 		super();
 		this.expression = expression;
 		this.result = result;
-	}
-
-	@Before
-	public void initialize() {
-		calculator = new Calculator();
 	}
 
 	@Parameterized.Parameters
@@ -61,27 +51,4 @@ public class CalculatorTest {
 
 		}
 	}
-
-	@Test
-	public void testCalcularInvalidExpressions() {
-		try {
-			Calculator.compute("add(5,mult(3,sub 6,4))");
-			fail("Invalid expression, expected to fail.");
-
-		} catch (RuntimeException e) {
-
-		}
-	}
-
-	@Test
-	public void testCalcularInvalidExpressions2() {
-		try {
-			Calculator.compute("let(a,let(b,2,(mult(b,3))");
-			fail("Invalid expression, expected to fail");
-
-		} catch (RuntimeException e) {
-
-		}
-	}
-
 }
