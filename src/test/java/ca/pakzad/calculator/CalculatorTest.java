@@ -66,7 +66,7 @@ public class CalculatorTest {
 	public void testCalcularInvalidExpressions() {
 		try {
 			Calculator.compute("add(5,mult(3,sub 6,4))");
-			fail("Expected to fail bucause of an invalid expression.");
+			fail("Invalid expression, expected to fail.");
 
 		} catch (RuntimeException e) {
 
@@ -77,7 +77,7 @@ public class CalculatorTest {
 	public void testCalcularInvalidExpressions2() {
 		try {
 			Calculator.compute("let(a,let(b,2,(mult(b,3))");
-			fail("Expected to fail bucause of an invalid expression.");
+			fail("Invalid expression, expected to fail");
 
 		} catch (RuntimeException e) {
 

@@ -29,10 +29,14 @@ public class Calculator {
 
 	public static long compute(String expression) {
 		
-		String ss[] = expression.trim().split("[(),]");
-		logger.debug("Processiong expression: {} started.", expression);
+		String tempArray[] = expression.trim().split("[(),]");
+		String[] expressionArray = new String[tempArray.length];
+		for(int i=0;i<tempArray.length;i++){
+			expressionArray[i]=tempArray[i].trim(); // remove white spaces
+		}
+		logger.debug("Processing expression: {} started.", expression);
 		
-		List<String> list = new ArrayList<String>(Arrays.asList(ss));
+		List<String> list = new ArrayList<String>(Arrays.asList(expressionArray));
 		list.removeAll(Arrays.asList("", null));
 		Object obj[] = list.toArray();
 		String[] exp = Arrays.copyOf(obj, obj.length, String[].class);
@@ -42,8 +46,8 @@ public class Calculator {
 		return result;
 	}
 	public static long compute(String[] expression) {
-		HashMap<String, Long> hMap = new HashMap<>();
-		return compute(expression, hMap);
+		HashMap<String, Long> variablesHashMap = new HashMap<>();
+		return compute(expression, variablesHashMap);
 	}
 
 	/************************************************************************
@@ -54,19 +58,19 @@ public class Calculator {
 	 * 
 	 * @param expression
 	 *            string in the form of: mult(5,mult(3,sub(6,4)))
-	 * @param hMap
+	 * @param VariablesHashMap
 	 * 		A HashMap to store variables and their values
 	 * @return an integer value, the result of evaluating the arithmetic
 	 *         
 	 * @throws RuntimeException
 	 * 
 	 *************************************************************************/
-	public static long compute(String[] expression, HashMap<String, Long> hMap) {
+	public static long compute(String[] expression, HashMap<String, Long> VariablesHashMap) {
 		logger.debug("Entering compute(): {}", Arrays.toString(expression));
 		
 		String token = expression[0];
 		if (token.equals(LET)) {
-			return processLet(expression);
+			return processLet(expression,VariablesHashMap);
 		}
 		String[] newExp = expression;
 		long result = 0;
@@ -80,19 +84,26 @@ public class Calculator {
 			newExp = Arrays.copyOfRange(expression, 1, 4);
 			op1 = compute(newExp); 
 			op2Index = 4;
-		}
-		else {
-			op1 = hMap.get(expression[1]);
+		} else if (expression[op2Index].equals(LET)) {
+		newExp = Arrays.copyOfRange(expression, 1, 4);
+		op1 = processLet(newExp, VariablesHashMap);
+		op2Index = 4;
+	}		else {
+			op1 = VariablesHashMap.get(expression[1]);
 			op2Index = 2;
-			logger.debug("get value for variable {} = {} ", expression[1],op1);
+			//logger.debug("get value for variable {} = {} ", expression[1],op1);
 		}
 		if (isInteger(expression[op2Index])) {
 			op2 = new Long(expression[op2Index]);
 		} else if (isOperator(expression[op2Index])) {
 			newExp = Arrays.copyOfRange(expression, op2Index, expression.length);
 			op2 = compute(newExp);
-		} else {
-			op2 = hMap.get(expression[op2Index]); // TODO catch exception
+		} else if (expression[op2Index].equals(LET)) {
+			newExp = Arrays.copyOfRange(expression, 2, expression.length);
+			op2 = processLet(newExp, VariablesHashMap); 
+		}
+		else {
+			op2 = VariablesHashMap.get(expression[op2Index]); // TODO catch exception
 			logger.debug("get value for variable {} = {} ", expression[2],op2);
 		}
 		switch (token) {
@@ -121,7 +132,7 @@ public class Calculator {
 	 * @param expression
 	 * @return
 	 ************************************************************/
-	private static long processLet(String[] expression) {
+	private static long processLet(String[] expression, HashMap<String, Long> VariablesHashMap) {
 
 		if (!expression[0].equals(LET)) {
 			return 0;
@@ -129,8 +140,6 @@ public class Calculator {
 		logger.debug("Entering processLet(): {}", Arrays.toString(expression));
 		String variable;
 		long value = 0; 
-		long result = 0; 
-		HashMap<String, Long> hMap = new HashMap<>();
 		variable = expression[1];
 		if (!PATTERN_VARIABLE.matcher(variable).matches()) {
 			String msg = " is not a valid variable. Variable names can contain lowercase and uppercase letters only.";
@@ -139,13 +148,18 @@ public class Calculator {
 		}
 		if (expression[2].equals(LET)) {
 			String[] newExp = Arrays.copyOfRange(expression, 2, expression.length);
-			value = processLet(newExp);
-			logger.debug("put <{},{}> in hMap", variable, value) ;
-			hMap.put(variable, value);
+			value = processLet(newExp,VariablesHashMap);
+			logger.debug("put <{},{}> in VariablesHashMap", variable, value) ;
+			VariablesHashMap.put(variable, value);
 			if (isOperator(expression[8])) {
 				newExp = Arrays.copyOfRange(expression, 8, expression.length);
-				return result = compute(newExp, hMap);
-			} else {
+				return compute(newExp, VariablesHashMap);
+			} if(expression[8].equals(LET)){
+				newExp = Arrays.copyOfRange(expression, 8, expression.length);
+				value = processLet(newExp,VariablesHashMap);
+				return value;
+			}
+			else {
 				String msg = "Invalid third argument for let";
 				logger.error(msg + " {}", expression[3]);
 				throw new InvalidParameterException(msg);
@@ -153,11 +167,11 @@ public class Calculator {
 		} else {
 			if (isInteger(expression[2])) {
 				value = new Integer(expression[2]);
-				logger.debug("put <{},{}> in hMap", variable, value) ;
-				hMap.put(variable, value);
+				logger.debug("put <{},{}> in VariablesHashMap", variable, value) ;
+				VariablesHashMap.put(variable, value);
 				if (isOperator(expression[3])) {
 					String[] newExp = Arrays.copyOfRange(expression, 3, expression.length);
-					return result = compute(newExp, hMap);
+					return compute(newExp, VariablesHashMap);
 				} else {
 					String msg = "Invalid third argument for let";
 					logger.error(msg + " {}", expression[3]);
@@ -166,9 +180,9 @@ public class Calculator {
 			} else {
 				// evaluate arithmetic expression (add,mult.div.dub)
 				String[] newExp = Arrays.copyOfRange(expression, 2, expression.length);
-				value = compute(newExp, hMap);
+				value = compute(newExp, VariablesHashMap);
 				logger.debug("put value: {}  for key {} 2", value, variable);
-				hMap.put(variable, value);
+				VariablesHashMap.put(variable, value);
 
 			}
 		}
