@@ -34,6 +34,7 @@ public class Main {
 			logger.error("",e);
 			//e.printStackTrace();
 			System.out.println("Failed to compute expression: " + expression );
+			System.out.println("The expression might be invalid.");
 			System.exit(1);
 		}
 		System.exit(0);
